@@ -2,3 +2,5 @@
 env/
 env/*
 */**/input.txt
+*/**/input
+*/**/test*
