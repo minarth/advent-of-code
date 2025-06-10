@@ -99,7 +99,7 @@ def part_two(code, mem):
         candidates += explore_path(code, str(i))
 
     for c in candidates:
-        print(int(c, base=8))
+        return int(c, base=8)
 
 
 if __name__ == "__main__":
@@ -108,5 +108,5 @@ if __name__ == "__main__":
 
     from input import code, mem
     print(f"part one {part_one(code, mem)}")
-    print(f"part two {part_two_oct(code,mem)}")
+    print(f"part two {part_two(code,mem)}")
 
