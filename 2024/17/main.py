@@ -62,10 +62,10 @@ def program(program, mem, early_stopping=False):
     OA = mem[0]
     while p < len(program):
         p, program, mem, out = step(p, program, mem, out)
-        #print(p,mem,out)
         if early_stopping and out:
             for a,b in zip(out, program):
                 if a != b: return out, mem
+
     return out, mem
 
 
@@ -74,42 +74,39 @@ def part_one(code, mem):
     return ",".join([str(o) for o in out])
 
 
+def test(o, code):
+    for a,b in zip(o[:-3],code):
+        if a!=b: 
+            return False
+    return True
+
+
+def explore_path(code, candidate):
+    o,m = program(code, [int(f"0o{candidate}", base=8), 0, 0])
+    if o == code: return [candidate]
+    if not test(o, code) or len(o) > len(code) or len(candidate) > 16: 
+        return []
+    candidates = list()
+    for i in range(8):
+        candidates += explore_path(code, f"{i}{candidate}")
+            
+    return candidates
+
+
 def part_two(code, mem):
-    out = []
-    A = 6**16 #465405 #0
-    test_mem = {(i+1): [] for i in range(16)}
-    counter = 0
-    max_found = 0
-    addition = 1
-    while out != code:
-        new_mem = [A, 0, 0]
-        out, mem = program(code, new_mem, True)
-        if len(out) > 5:
-            test_mem[len(out)].append(A)
-            counter += 1
-            if len(out) > max_found:
-                max_found = len(out)
-                print(f"Found: {max_found}")
-                print(f"a len {bin(mem[0])}")
-            if len(test_mem[len(out)]) >= 2:
-                if addition != test_mem[len(out)][1]-test_mem[len(out)][0]:
-                    print(f"new addition {addition}")
-                addition = test_mem[len(out)][1]-test_mem[len(out)][0]
-        A += addition
-    return A-1
+    candidates = list() 
+    for i in range(8):
+        candidates += explore_path(code, str(i))
+
+    for c in candidates:
+        print(int(c, base=8))
+
 
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
 
-
     from input import code, mem
     print(f"part one {part_one(code, mem)}")
-
-    #print(f" test part two {part_two([0,3,5,4,3,0], [0,0,0])}")
-    # too high 108116164712956
-    #          16926659444736
-    #          913781004797
-    #          2442789362173
-    print(f"part two {part_two(code,mem)}")
+    print(f"part two {part_two_oct(code,mem)}")
 
